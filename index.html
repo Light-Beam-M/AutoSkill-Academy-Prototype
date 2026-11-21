@@ -25,7 +25,7 @@ nav .n{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;
 nav button.done .n{background:var(--amber);border-color:var(--amber);color:var(--navy)}
 nav hr{border:0;border-top:1px solid #ffffff22;margin:14px 0}
 .mock{font-size:11px;color:#8aa0bd;margin-top:16px;line-height:1.5}
-main{padding:28px 34px;max-width:1150px}
+main{padding:28px 40px;min-width:0}
 h1{font-size:30px;margin:0 0 6px}h2{font-size:22px;margin:0 0 12px}
 .sub{color:var(--mute);margin:0 0 22px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
@@ -341,6 +341,12 @@ function renderQuote() {
 }
 ['#bN', '#bSys', '#bLoc', '#bName'].forEach(s => $(s).addEventListener('input', renderQuote));
 
+// Keep a canvas's drawing buffer and camera aspect in sync with its on-screen size (full-width layout resizes).
+function fit(renderer, cam, c) {
+  const w = c.clientWidth, h = c.clientHeight, v = renderer.getSize(new THREE.Vector2());
+  if (w && h && (v.x !== w || v.y !== h)) { renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+}
+
 // ---------- hero 3D ----------
 {
   const c = $('#heroCanvas'), { renderer, scene } = setupStage(c, { w: c.clientWidth || 500, h: 340 });
@@ -350,7 +356,7 @@ function renderQuote() {
   (function loop(t) {
     const k = (t - t0) / 1000;
     a.j0.rotation.y = Math.sin(k * 0.5) * 0.9; a.j1.rotation.z = -0.45 + Math.sin(k * 0.8) * 0.2; a.j2.rotation.z = -0.3 + Math.sin(k * 0.8 + 1) * 0.35; a.j3.rotation.z = 0.6 + Math.sin(k) * 0.3; a.setGrip((Math.sin(k * 1.6) + 1) / 2);
-    if (!c.closest('.hide')) renderer.render(scene, cam);
+    if (!c.closest('.hide')) { fit(renderer, cam, c); renderer.render(scene, cam); }
     requestAnimationFrame(loop);
   })(t0);
 }
@@ -396,7 +402,7 @@ function startLab() {
     if (near) mark(0);
     if (lab.held) box.position.copy(wp);
     sync(); ctl.update();
-    if (!c.closest('.hide')) renderer.render(scene, cam);
+    if (!c.closest('.hide')) { fit(renderer, cam, c); renderer.render(scene, cam); }
     requestAnimationFrame(loop);
   })();
 }
