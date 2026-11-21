@@ -70,6 +70,18 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 .job{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center}
 .job .lg{width:56px;height:56px;border-radius:14px;background:var(--navy2);color:#fff;display:grid;place-items:center;font-weight:800}
 .match{font-size:26px;font-weight:800;color:var(--teal)}
+.quoteDoc{margin-top:18px;padding:34px 38px}
+.qHead{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid var(--navy);padding-bottom:16px;margin-bottom:18px}
+.qTitle{font-size:28px;font-weight:800;color:var(--navy);text-align:right;line-height:1.2}
+.qTable{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.qTable th{background:var(--navy);color:#fff;text-align:left;padding:10px;font-weight:600}
+.qTable td{border-bottom:1px solid var(--line);padding:10px;vertical-align:top}
+.qTable .r{text-align:right;white-space:nowrap}
+.qSum{margin-left:auto;width:min(360px,100%);font-size:15px}
+.qSum div{display:flex;justify-content:space-between;padding:6px 0}
+.qSum .tot{border-top:2px solid var(--navy);font-size:20px;font-weight:800;color:var(--teal-d);margin-top:4px;padding-top:10px}
+.save{background:#e9f9ee;color:var(--ok);border-radius:12px;padding:10px 14px;font-weight:600;margin:10px 0}
+@media print{nav,.toast,.noprint,section:not([data-page="b2b"]){display:none!important}.app{display:block}main{padding:0}.quoteDoc{border:0;margin:0;padding:0}}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.show{opacity:1}
 .hide{display:none!important}
@@ -182,19 +194,25 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 
 <!-- B2B -->
 <section data-page="b2b" class="hide">
-  <h1>หลักสูตรเฉพาะองค์กร (Tailor-made)</h1><p class="sub">บอกเครื่องจักรและปัญหาหน้างาน เราออกแบบหลักสูตรและอบรมถึงโรงงาน</p>
-  <div class="grid g2">
+  <h1 class="noprint">หลักสูตรเฉพาะองค์กร (Tailor-made)</h1><p class="sub noprint">บอกเครื่องจักรและปัญหาหน้างาน เราออกแบบหลักสูตรและอบรมถึงโรงงาน</p>
+  <div class="grid g2 noprint">
     <div class="card">
       <label class="muted">ชื่อโรงงาน</label><input class="f" id="bName" value="บริษัท ตัวอย่าง จำกัด (จ.ชลบุรี)">
       <label class="muted">ระบบที่ใช้ในโรงงาน</label>
       <select class="f" id="bSys"><option>PLC Mitsubishi / Siemens</option><option>แขนกล FANUC / ABB / KUKA</option><option>Cobot (Universal Robots ฯลฯ)</option><option>HMI / SCADA / IIoT</option></select>
-      <label class="muted">จำนวนพนักงานที่จะอบรม: <b id="bNv">20</b> คน</label>
-      <input type="range" id="bN" min="5" max="60" value="20" style="width:100%;accent-color:#12b5a6">
-      <label class="muted" style="display:block;margin-top:10px">สถานที่</label>
-      <select class="f" id="bLoc"><option>In-house ที่โรงงาน</option><option>ศูนย์ฝึก AutoSkill</option></select>
+      <label class="muted">หลักสูตร</label>
+      <select class="f" id="bCourse"></select>
+      <label class="muted">จำนวนพนักงานที่จะอบรม: <b id="bNv">24</b> คน</label>
+      <input type="range" id="bN" min="5" max="60" value="24" style="width:100%;accent-color:#12b5a6">
+      <div class="grid g2" style="margin-top:10px;gap:12px">
+        <div><label class="muted">สถานที่</label><select class="f" id="bLoc"><option>In-house ที่โรงงาน</option><option>ศูนย์ฝึก AutoSkill</option></select></div>
+        <div><label class="muted">เดือนที่ต้องการเริ่ม</label><select class="f" id="bMonth"><option>มกราคม 2570</option><option>กุมภาพันธ์ 2570</option><option>มีนาคม 2570</option><option>เมษายน 2570</option></select></div>
+      </div>
+      <label class="muted">ผู้ติดต่อ (ฝ่าย HR / ฝึกอบรม)</label><input class="f" id="bContact" value="คุณสมหญิง (HR Manager)">
     </div>
     <div class="card" id="quote"></div>
   </div>
+  <div class="card quoteDoc hide" id="quoteDoc"></div>
 </section>
 </main>
 </div>
@@ -231,7 +249,7 @@ const QUIZ = [
 const blank = () => ({ answers: {}, level: null, rec: null, course: 'rob', batch: null, booking: null, lab: false, visited: {} });
 let S; try { S = JSON.parse(localStorage.getItem('autoskill-demo')) || blank(); } catch { S = blank(); }
 // ?demo=1 preloads a finished learner journey, so the presenter can jump straight to Passport/Jobs.
-if (new URLSearchParams(location.search).has('demo')) S = { ...blank(), answers: { 0: 0, 1: 1, 2: 1, 3: 1, 4: 1 }, level: 'Intermediate', rec: 'rob', batch: 0, lab: true, booking: { name: 'สมชาย ใจดี', type: 'นักศึกษา ปวส. / วิทยาลัยเทคนิค', code: 'AS-7K2QD', course: 'rob', batch: 0 }, visited: { courses: true } };
+if (new URLSearchParams(location.search).has('demo')) S = { ...blank(), answers: { 0: 0, 1: 1, 2: 1, 3: 1, 4: 1 }, level: 'Intermediate', rec: 'rob', batch: 0, lab: true, booking: { name: 'สมชาย ใจดี', type: 'นักศึกษา ปวส. / วิทยาลัยเทคนิค', code: 'AS-7K2QD', course: 'rob', batch: 0 }, picked: true, visited: {} };
 const save = () => { try { localStorage.setItem('autoskill-demo', JSON.stringify(S)); } catch {} };
 const $ = s => document.querySelector(s);
 const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2200); };
@@ -240,7 +258,7 @@ const course = () => COURSES.find(c => c.id === S.course);
 // ---------- navigation ----------
 const STEPS = [['home', 'หน้าแรก'], ['assess', 'วัดระดับทักษะ'], ['courses', 'เลือกหลักสูตร'], ['lab', 'Virtual Lab 3D'], ['book', 'จองรอบอบรม'], ['passport', 'Skill Passport'], ['jobs', 'จับคู่งาน']];
 function renderNav(cur) {
-  const done = { assess: !!S.level, courses: !!S.course && S.visited.courses, lab: S.lab, book: !!S.booking, passport: !!S.booking, jobs: S.visited.jobs };
+  const done = { assess: !!S.level, courses: !!S.picked, lab: S.lab, book: !!S.booking, passport: !!S.booking, jobs: !!S.applied }; // tick on actions, not visits
   $('#navList').innerHTML = STEPS.map(([k, l], i) => `<button data-go="${k}" class="${k === cur ? 'on' : ''} ${done[k] ? 'done' : ''}"><span class="n">${done[k] ? '✓' : i}</span>${l}</button>`).join('');
   document.querySelectorAll('nav [data-go="b2b"]').forEach(b => b.classList.toggle('on', cur === 'b2b'));
 }
@@ -278,8 +296,8 @@ function renderCourses() {
     <div><span class="pill n">${c.lvl}</span> <span class="pill n">${c.hrs} ชม.</span> <span class="pill n">Hands-on 60%</span>${c.lab ? ' <span class="pill">มี Virtual Lab 3D</span>' : ''}</div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="price">฿${PRICE.toLocaleString()}</span>
     <span>${c.lab ? `<button class="btn ghost" data-lab="${c.id}">ลอง Lab</button> ` : ''}<button class="btn" data-book="${c.id}">จอง</button></span></div></div>`).join('');
-  $('#courseList').querySelectorAll('[data-book]').forEach(b => b.onclick = () => { S.course = b.dataset.book; save(); go('book'); });
-  $('#courseList').querySelectorAll('[data-lab]').forEach(b => b.onclick = () => { S.course = b.dataset.lab; save(); go('lab'); });
+  $('#courseList').querySelectorAll('[data-book]').forEach(b => b.onclick = () => { S.course = b.dataset.book; S.picked = true; save(); go('book'); });
+  $('#courseList').querySelectorAll('[data-lab]').forEach(b => b.onclick = () => { S.course = b.dataset.lab; S.picked = true; save(); go('lab'); });
 }
 
 // ---------- booking ----------
@@ -329,22 +347,73 @@ function renderJobs() {
     <div><b>${j.pos}</b><br><span class="muted">${j.co} · ${j.loc}</span><br>${j.need.map(n => `<span class="pill ${sk.has(n) ? '' : 'n'}">${sk.has(n) ? '✓ ' : ''}${n}</span>`).join(' ')} <span class="muted">· ฿${j.sal}/เดือน</span></div>
     <div style="text-align:right"><div class="match">${j.m}%</div><button class="btn" data-apply>สมัครด้วย Passport</button></div></div>`).join('') +
     `<p class="muted">* ข้อมูลบริษัทและตำแหน่งเป็นข้อมูลจำลองเพื่อสาธิต</p>`;
-  $('#jobList').querySelectorAll('[data-apply]').forEach(b => b.onclick = () => { b.textContent = 'ส่งโปรไฟล์แล้ว ✓'; b.disabled = true; toast('ส่ง Skill Passport ให้ฝ่าย HR แล้ว'); });
+  $('#jobList').querySelectorAll('[data-apply]').forEach(b => b.onclick = () => { b.textContent = 'ส่งโปรไฟล์แล้ว ✓'; b.disabled = true; S.applied = true; save(); renderNav('jobs'); toast('ส่ง Skill Passport ให้ฝ่าย HR แล้ว'); });
 }
 
-// ---------- B2B quote (฿75,000 per batch of up to 10, from the cost-benefit model) ----------
-function renderQuote() {
-  const n = +$('#bN').value, batches = Math.ceil(n / 10), total = batches * 75000;
-  $('#bNv').textContent = n;
-  $('#quote').innerHTML = `<h2>ใบเสนอราคาเบื้องต้น</h2><p class="muted">${$('#bName').value}</p>
-    <p>หลักสูตร Tailor-made: <b>${$('#bSys').value}</b><br>${$('#bLoc').value}</p>
-    <p>${n} คน → <b>${batches} รุ่น</b> (รุ่นละไม่เกิน 10 คน) × ฿75,000</p>
-    <div class="price" style="font-size:34px;color:#0e8f84">฿${total.toLocaleString()}</div>
-    <p class="muted">≈ ฿${Math.round(total / n).toLocaleString()} ต่อคน · รวมวิเคราะห์ปัญหาหน้างาน + ติดตามผลหลังอบรม 30 วัน</p>
-    <p class="muted" style="font-size:13px">หลักสูตรยื่นรับรองกับกรมพัฒนาฝีมือแรงงาน เพื่อให้องค์กรนำค่าใช้จ่ายไปลดหย่อนภาษีได้</p>
-    <button class="btn" onclick="this.textContent='ส่งคำขอแล้ว ✓ ทีมงานจะติดต่อกลับใน 1 วันทำการ';this.disabled=true">ขอนัดสำรวจหน้างาน</button>`;
+// ---------- B2B quote: ฿75,000 per batch of up to 12 people (corporate package) ----------
+const B2B_PRICE = 75000, B2B_SEATS = 12, VAT = 0.07;
+$('#bCourse').innerHTML = COURSES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+const baht = v => '฿' + Math.round(v).toLocaleString();
+function quoteCalc() {
+  const n = +$('#bN').value, batches = Math.ceil(n / B2B_SEATS), sub = batches * B2B_PRICE;
+  return { n, batches, sub, vat: sub * VAT, total: sub * (1 + VAT), per: sub / n, free: batches * B2B_SEATS - n, c: COURSES.find(c => c.id === $('#bCourse').value) };
 }
-['#bN', '#bSys', '#bLoc', '#bName'].forEach(s => $(s).addEventListener('input', renderQuote));
+function renderQuote() {
+  const q = quoteCalc(), save = Math.round((1 - q.per / PRICE) * 100);
+  $('#bNv').textContent = q.n;
+  $('#quote').innerHTML = `<h2>สรุปราคา</h2><p class="muted">${$('#bName').value}</p>
+    <p>${q.c.name}<br><span class="muted">ปรับเนื้อหาตาม ${$('#bSys').value} · ${$('#bLoc').value}</span></p>
+    <p>${q.n} คน → <b>${q.batches} รุ่น</b> (รุ่นละไม่เกิน ${B2B_SEATS} คน) × ${baht(B2B_PRICE)}</p>
+    <div class="price" style="font-size:34px;color:#0e8f84">${baht(q.sub)} <span class="muted" style="font-size:14px;font-weight:400">+ VAT</span></div>
+    <p class="muted">เฉลี่ย <b>${baht(q.per)}</b> ต่อคน</p>
+    ${save > 0 ? `<div class="save">ประหยัด ${save}% เมื่อเทียบกับราคาสมัครรายบุคคล (${baht(PRICE)}/คน)</div>` : ''}
+    ${q.free ? `<p class="muted" style="font-size:13px">💡 รุ่นสุดท้ายยังว่าง ${q.free} ที่ — เพิ่มพนักงานได้อีก ${q.free} คนโดยไม่มีค่าใช้จ่ายเพิ่ม</p>` : ''}
+    <button class="btn" id="qBtn" style="width:100%">ดูใบเสนอราคาฉบับเต็ม →</button>`;
+  $('#qBtn').onclick = () => { renderQuoteDoc(); $('#quoteDoc').classList.remove('hide'); $('#quoteDoc').scrollIntoView({ behavior: 'smooth' }); };
+  if (!$('#quoteDoc').classList.contains('hide')) renderQuoteDoc();
+}
+function renderQuoteDoc() {
+  const q = quoteCalc(), today = new Date(), valid = new Date(+today + 30 * 864e5);
+  const d = x => x.toLocaleDateString('th-TH', { dateStyle: 'long' });
+  const no = 'QT-' + (today.getFullYear() + 543) + '-' + String(q.n * 37 + q.batches * 11).padStart(4, '0');
+  const rows = [
+    [`หลักสูตร ${q.c.name}<br><span class="muted">ปรับเนื้อหาตามเครื่องจักร ${$('#bSys').value} · ${q.c.hrs} ชั่วโมง · Hands-on กับชุดฝึกจริง · รุ่นละไม่เกิน ${B2B_SEATS} คน · ${$('#bLoc').value}</span>`, q.batches, 'รุ่น', baht(B2B_PRICE), baht(q.sub)],
+    ['วิเคราะห์ปัญหาหน้างานและออกแบบหลักสูตร (Training Needs Analysis)', 1, 'ครั้ง', '-', 'รวมในแพ็กเกจ'],
+    ['Skill Passport และใบรับรองทักษะรายบุคคล (หลังผ่านสอบปฏิบัติ)', q.n, 'คน', '-', 'รวมในแพ็กเกจ'],
+    ['ติดตามผลและให้คำปรึกษาหลังอบรม 30 วัน (Post-Training Support)', 1, 'งาน', '-', 'รวมในแพ็กเกจ'],
+  ];
+  $('#quoteDoc').innerHTML = `
+    <div class="qHead">
+      <div><div class="brand" style="color:var(--navy)"><div class="logo" style="color:#fff">A</div><b style="font-size:22px">Auto<span style="color:var(--teal)">Skill</span> Academy</b></div>
+        <p class="muted" style="margin:6px 0 0;font-size:13px">ศูนย์ฝึกอบรมระบบอัตโนมัติอุตสาหกรรม<br>ข้อมูลผู้เสนอราคาเป็นข้อมูลจำลองสำหรับ Prototype</p></div>
+      <div><div class="qTitle">ใบเสนอราคา<br><span style="font-size:15px;color:var(--mute);font-weight:600">QUOTATION</span></div>
+        <p style="text-align:right;margin:8px 0 0;font-size:13px">เลขที่ <b>${no}</b><br>วันที่ ${d(today)}<br>ยืนราคาถึง ${d(valid)}</p></div>
+    </div>
+    <div class="grid g2" style="gap:12px;font-size:14px">
+      <div><span class="muted">เสนอราคาแก่</span><br><b>${$('#bName').value}</b><br>${$('#bContact').value}</div>
+      <div><span class="muted">รายละเอียดการอบรม</span><br>ผู้เข้าอบรม <b>${q.n} คน</b> · ${q.batches} รุ่น<br>เริ่มอบรม ${$('#bMonth').value} · ${$('#bLoc').value}</div>
+    </div>
+    <table class="qTable"><thead><tr><th>#</th><th>รายการ</th><th class="r">จำนวน</th><th>หน่วย</th><th class="r">ราคา/หน่วย</th><th class="r">จำนวนเงิน</th></tr></thead>
+      <tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r[0]}</td><td class="r">${r[1]}</td><td>${r[2]}</td><td class="r">${r[3]}</td><td class="r">${r[4]}</td></tr>`).join('')}</tbody></table>
+    <div class="qSum">
+      <div><span>รวมเป็นเงิน</span><span>${baht(q.sub)}</span></div>
+      <div><span>ภาษีมูลค่าเพิ่ม 7%</span><span>${baht(q.vat)}</span></div>
+      <div class="tot"><span>ยอดรวมทั้งสิ้น</span><span>${baht(q.total)}</span></div>
+      <div class="muted" style="font-size:13px"><span>เฉลี่ยต่อคน (ก่อน VAT)</span><span>${baht(q.per)}</span></div>
+    </div>
+    <h3 style="margin:18px 0 6px">เงื่อนไข</h3>
+    <ol class="muted" style="font-size:13px;line-height:1.8;margin:0;padding-left:20px">
+      <li>ชำระมัดจำ 50% เมื่อยืนยันใบเสนอราคา ส่วนที่เหลือชำระภายใน 30 วันหลังจบการอบรม</li>
+      <li>หลักสูตรยื่นขอรับรองกับกรมพัฒนาฝีมือแรงงาน เพื่อให้องค์กรนำค่าใช้จ่ายไปลดหย่อนภาษีได้ตามหลักเกณฑ์</li>
+      <li>รุ่นละไม่เกิน ${B2B_SEATS} คน เพื่อให้ผู้เรียนทุกคนได้ลงมือกับอุปกรณ์จริง</li>
+      <li>ใบเสนอราคานี้สร้างจากระบบสาธิต (Prototype) — ราคาอ้างอิงแบบจำลองธุรกิจ ไม่ใช่ข้อเสนอทางการค้า</li>
+    </ol>
+    <div class="noprint" style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
+      <button class="btn" onclick="window.print()">🖨 พิมพ์ / บันทึกเป็น PDF</button>
+      <button class="btn amber" onclick="this.textContent='ยืนยันแล้ว ✓ ทีมงานจะติดต่อกลับเพื่อนัดสำรวจหน้างานภายใน 1 วันทำการ';this.disabled=true">ยืนยันและนัดสำรวจหน้างาน</button>
+    </div>`;
+}
+['#bN', '#bSys', '#bLoc', '#bName', '#bCourse', '#bMonth', '#bContact'].forEach(s => $(s).addEventListener('input', renderQuote));
 
 // Keep a canvas's drawing buffer and camera aspect in sync with its on-screen size (full-width layout resizes).
 function fit(renderer, cam, c) {
