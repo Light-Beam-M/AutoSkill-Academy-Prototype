@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AutoSkill App — Prototype</title>
+<title>AutoSkill Academy — ศูนย์ฝึก Automation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&display=swap" rel="stylesheet">
 <script type="importmap">{"imports":{"three":"./lib/three.module.js"}}</script>
@@ -112,6 +112,8 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);max-width:90vw;text-align:center;background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.show{opacity:1}
 .hide{display:none!important}
+.presenter-only{display:none!important}
+body.presenter button.presenter-only{display:flex!important}body.presenter div.presenter-only{display:block!important}
 body{background:linear-gradient(180deg,#e9f2f6 0,#f2f5f9 320px)}
 section:not(.hide){animation:fadeUp .35s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -182,9 +184,9 @@ h1{font-size:32px}
     <div id="navList"></div>
     <hr>
     <button data-go="b2b"><span class="n">B</span>สำหรับโรงงาน (B2B)</button>
-    <button id="resetBtn"><span class="n">↺</span>เริ่มเดโมใหม่</button>
+    <button id="resetBtn" class="presenter-only"><span class="n">↺</span>เริ่มเดโมใหม่</button>
   </div>
-  <div class="mock">Prototype สำหรับนำเสนอ — รอบอบรม ตำแหน่งงาน และช่วงเงินเดือนเป็นข้อมูลจำลอง</div>
+  <div class="mock presenter-only">โหมดผู้นำเสนอ — ปุ่มเดโมจะแสดงเฉพาะลิงก์นี้</div>
 </nav>
 <main id="main">
 <div class="stepper" id="stepper"></div>
@@ -214,7 +216,7 @@ h1{font-size:32px}
       <p>฿75,000 ต่อรุ่น สูงสุด 12 คน (≈ ฿6,250 ต่อคน) · ออกแบบตามเครื่องจักรของคุณ · ติดตามผล 30 วัน</p></div>
     <button class="btn amber" data-go="b2b">ขอใบเสนอราคา →</button>
   </div>
-  <footer class="foot"><b>Auto<span>Skill</span> Academy</b> · Play · Code · Grow<br><span>Prototype สำหรับการนำเสนอ — รอบอบรม ตำแหน่งงาน และช่วงเงินเดือนเป็นข้อมูลจำลอง</span></footer>
+  <footer class="foot"><b>Auto<span>Skill</span> Academy</b> · Play · Code · Grow<br><span>© 2569 AutoSkill Academy · ศูนย์ฝึกอบรมระบบอัตโนมัติอุตสาหกรรม</span></footer>
 </section>
 
 <!-- ASSESS -->
@@ -268,7 +270,6 @@ h1{font-size:32px}
       <select class="f" id="fPay"><option>PromptPay QR</option><option>ผ่อน 0% 3 เดือน</option><option>บริษัทออกค่าใช้จ่าย (ออกใบกำกับภาษี)</option></select>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="muted">ยอดชำระ</span><span class="price" id="bookPrice"></span></div>
       <button class="btn" id="bookBtn" style="width:100%;margin-top:14px">ยืนยันการจอง</button>
-      <p class="muted" style="font-size:12px">* เดโม: ไม่มีการตัดเงินจริง</p>
     </div>
   </div>
 </section>
@@ -325,6 +326,9 @@ const COURSES = [
   { id: 'sf', ic: 'factory', name: 'Smart Factory & IIoT Integration', lvl: 'Advanced', hrs: 24, desc: 'เชื่อม PLC–Robot–Sensor เก็บข้อมูลการผลิตขึ้น Dashboard', skills: ['PLC', 'Robot', 'IIoT'] },
 ];
 const PRICE = 7500;
+// Presenter tools (reset, simulate exam) only appear on the pitch links: ?demo=1, ?demo=2 or ?presenter=1.
+const PRESENTER = /[?&](demo|presenter)=/.test(location.search);
+document.body.classList.toggle('presenter', PRESENTER);
 // Line icons (24px, stroke) — consistent family instead of emoji.
 const ICONS = {
   zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
@@ -523,7 +527,7 @@ function renderPassport() {
       <p class="muted" style="font-size:13px">เลขที่ ${certNo} · ออกให้ ณ วันที่ ${S.certified ? new Date().toLocaleDateString('th-TH', { dateStyle: 'long' }) : '—'}<br>ตรวจสอบใบรับรอง: autoskillacademy.vercel.app/verify/${certNo}</p>
       <div class="sign"><span>ผู้สอนหลักสูตร</span><span>ผู้อำนวยการ AutoSkill Academy</span></div>
     </div>
-    ${S.certified ? '' : `<div class="certLock noprint"><div><b style="display:inline-flex;gap:8px;align-items:center">${svg('lock')} ใบรับรองยังไม่ออก</b><p class="muted" style="margin:8px 0 12px">จะออกให้เมื่อคุณผ่านสอบปฏิบัติในวันสุดท้ายของ${batch[0]} (${batch[1]})</p><button class="btn amber" id="simExam">▶ เดโม: จำลองว่าสอบผ่าน</button></div></div>`}
+    ${S.certified ? '' : `<div class="certLock noprint"><div><b style="display:inline-flex;gap:8px;align-items:center">${svg('lock')} ใบรับรองยังไม่ออก</b><p class="muted" style="margin:8px 0 12px">จะออกให้เมื่อคุณผ่านสอบปฏิบัติในวันสุดท้ายของ${batch[0]} (${batch[1]})</p>${PRESENTER ? '<button class="btn amber" id="simExam">โหมดนำเสนอ: จำลองว่าสอบผ่าน</button>' : ''}</div></div>`}
   </div>
   ${S.certified ? `<div class="noprint" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" onclick="window.print()">ดาวน์โหลดใบรับรอง (PDF)</button><button class="btn ghost" data-go="jobs">ดูงานที่เหมาะกับทักษะ →</button></div>` : ''}`;
   $('#simExam')?.addEventListener('click', () => { S.certified = true; save(); renderNav('passport'); renderPassport(); toast('ผ่านสอบปฏิบัติ — ออกใบรับรองแล้ว'); });
@@ -556,7 +560,7 @@ function renderJobs() {
       <li>ระบุเลขใบรับรอง — HR ตรวจสอบได้ที่ autoskillacademy.vercel.app/verify</li>
       <li>เล่าผลงานจากภารกิจ Pick & Place หรือโปรเจกต์ในคลาสตอนสัมภาษณ์</li></ol>
       <button class="btn" data-go="passport" style="margin-top:12px">ไปที่ Skill Passport</button></div>
-    <p class="muted">* ตำแหน่งและช่วงเงินเดือนเป็นข้อมูลจำลองเพื่อสาธิต — % คำนวณจากระดับหลักฐานใน Passport (รับรองแล้ว = เต็ม)</p>`;
+    <p class="muted">% ความตรงคำนวณจากระดับหลักฐานใน Skill Passport (รับรองแล้ว = เต็ม) · ช่วงเงินเดือนเป็นค่าประมาณ</p>`;
   $('#jobList').querySelectorAll('[data-save]').forEach(b => b.onclick = () => {
     const k = b.dataset.save; S.saved[k] ? delete S.saved[k] : (S.saved[k] = true); save(); renderNav('jobs'); renderJobs();
   });
@@ -597,7 +601,7 @@ function renderQuoteDoc() {
   $('#quoteDoc').innerHTML = `
     <div class="qHead">
       <div><div class="brand" style="color:var(--navy)"><div class="logo" style="color:#fff">A</div><b style="font-size:22px">Auto<span style="color:var(--teal)">Skill</span> Academy</b></div>
-        <p class="muted" style="margin:6px 0 0;font-size:13px">ศูนย์ฝึกอบรมระบบอัตโนมัติอุตสาหกรรม<br>ข้อมูลผู้เสนอราคาเป็นข้อมูลจำลองสำหรับ Prototype</p></div>
+        <p class="muted" style="margin:6px 0 0;font-size:13px">ศูนย์ฝึกอบรมระบบอัตโนมัติอุตสาหกรรม</p></div>
       <div><div class="qTitle">ใบเสนอราคา<br><span style="font-size:15px;color:var(--mute);font-weight:600">QUOTATION</span></div>
         <p style="text-align:right;margin:8px 0 0;font-size:13px">เลขที่ <b>${no}</b><br>วันที่ ${d(today)}<br>ยืนราคาถึง ${d(valid)}</p></div>
     </div>
@@ -618,7 +622,6 @@ function renderQuoteDoc() {
       <li>ชำระมัดจำ 50% เมื่อยืนยันใบเสนอราคา ส่วนที่เหลือชำระภายใน 30 วันหลังจบการอบรม</li>
       <li>หลักสูตรยื่นขอรับรองกับกรมพัฒนาฝีมือแรงงาน เพื่อให้องค์กรนำค่าใช้จ่ายไปลดหย่อนภาษีได้ตามหลักเกณฑ์</li>
       <li>รุ่นละไม่เกิน ${B2B_SEATS} คน เพื่อให้ผู้เรียนทุกคนได้ลงมือกับอุปกรณ์จริง</li>
-      <li>ใบเสนอราคานี้สร้างจากระบบสาธิต (Prototype) — ราคาอ้างอิงแบบจำลองธุรกิจ ไม่ใช่ข้อเสนอทางการค้า</li>
     </ol>
     <div class="noprint" style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
       <button class="btn" onclick="window.print()">🖨 พิมพ์ / บันทึกเป็น PDF</button>
@@ -731,7 +734,7 @@ function autoRun() { // a scripted "PLC program": approach → grip → lift →
 
 go(location.hash.slice(1) || 'home');
 addEventListener('hashchange', () => { const p = location.hash.slice(1); if (document.querySelector(`[data-page="${p}"]`)?.classList.contains('hide')) go(p); });
-window.__demo = () => ({ lab: lab && { q: lab.q, held: lab.held, box: lab.box.position.toArray(), steps: lab.steps }, S }); // debug hook for testing
+if (PRESENTER) window.__demo = () => ({ lab: lab && { q: lab.q, held: lab.held, box: lab.box.position.toArray(), steps: lab.steps }, S }); // debug hook for testing
 </script>
 </body>
 </html>

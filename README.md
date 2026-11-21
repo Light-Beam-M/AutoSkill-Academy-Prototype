@@ -4,8 +4,9 @@ Clickable prototype for AutoSkill Academy's business pitch: skill assessment →
 
 Static site, no build step. Three.js is vendored in `lib/`.
 
-- Demo states: `/?demo=1#passport` (enrolled, exam pending) · `/?demo=2#passport` (certified)
+- Visitors see the clean user view. Presenter tools (reset, simulate exam passed) only appear on presenter links:
+  `/?presenter=1`, `/?demo=1#passport` (enrolled, exam pending), `/?demo=2#passport` (certified)
 - Run locally: `python -m http.server 8765` (or double-click `start-demo.bat` on Windows), then open http://localhost:8765
 - `render.html` renders the 3D models used in the pitch deck (`?scene=arm|arm2|plc|cap|market|stairs`)
 
-Company names, jobs and course dates in the demo are mock data.
+Course dates, job roles and salary ranges are illustrative data for the pitch.
