@@ -48,8 +48,13 @@ h1{font-size:30px;margin:0 0 6px}h2{font-size:22px;margin:0 0 12px}
 .course .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:#e6f7f5}
 .price{font-size:22px;font-weight:800}.muted{color:var(--mute);font-size:14px}
 .bar{height:8px;border-radius:9px;background:#e8eef7;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}
-.lab{display:grid;grid-template-columns:1fr 300px;gap:16px}
-#labCanvas{width:100%;height:470px;display:block;border-radius:16px;background:radial-gradient(circle at 50% 30%,#1f3d6b,#0b1b33)}
+.lab{display:grid;grid-template-columns:1fr 300px;gap:16px;height:calc(100vh - 150px);min-height:460px}
+.lab .ctl{overflow:auto}
+.stage{position:relative;min-height:0}
+.fsBtn{position:absolute;top:12px;right:12px;border:0;border-radius:10px;padding:8px 12px;background:#ffffff22;color:#fff;backdrop-filter:blur(4px)}
+.fsBtn:hover{background:#ffffff40}
+.lab:fullscreen{height:100vh;padding:16px;background:var(--bg)}
+#labCanvas{width:100%;height:100%;display:block;border-radius:16px;background:radial-gradient(circle at 50% 30%,#1f3d6b,#0b1b33)}
 .ctl label{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);margin-top:10px}
 .ctl input[type=range]{width:100%;accent-color:var(--teal)}
 .task{font-size:14px;padding:10px 12px;border-radius:12px;background:#f6f8fb;margin:6px 0;display:flex;gap:8px}
@@ -68,7 +73,7 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.show{opacity:1}
 .hide{display:none!important}
-@media (max-width:860px){.app{grid-template-columns:1fr}nav{position:static;height:auto}.hero,.lab,.g2,.g3,.g4{grid-template-columns:1fr}main{padding:18px 16px}}
+@media (max-width:860px){.lab{height:auto}.stage{height:60vh}.app{grid-template-columns:1fr}nav{position:static;height:auto}.hero,.lab,.g2,.g3,.g4{grid-template-columns:1fr}main{padding:18px 16px}}
 </style>
 </head>
 <body>
@@ -121,7 +126,7 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 <section data-page="lab" class="hide">
   <h1>Virtual Lab: หยิบ–วางชิ้นงาน</h1><p class="sub">ภารกิจแรกของคอร์ส Robot — สั่งแขนกลหยิบกล่องสีส้มไปวางในโซนสีเขียว (ลากหมุนมุมกล้องได้)</p>
   <div class="lab">
-    <canvas id="labCanvas"></canvas>
+    <div class="stage"><canvas id="labCanvas"></canvas><button class="fsBtn" id="fsBtn">⛶ เต็มจอ</button></div>
     <div class="card ctl">
       <h2 style="margin-bottom:4px">แผงควบคุม</h2>
       <label>J1 ฐานหมุน <span id="v0"></span></label><input type="range" id="s0" min="-3.14" max="3.14" step="0.01">
@@ -391,6 +396,8 @@ function startLab() {
   $('#gripBtn').onclick = () => setGrip(lab.grip ? 0 : 1);
   $('#autoBtn').onclick = autoRun;
   $('#labReset').onclick = labReset;
+  $('#fsBtn').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.querySelector('.lab').requestFullscreen();
+  document.addEventListener('fullscreenchange', () => $('#fsBtn').textContent = document.fullscreenElement ? '✕ ออกจากเต็มจอ' : '⛶ เต็มจอ');
   labReset();
   const wp = new THREE.Vector3(); let last = performance.now();
   (function loop(now = performance.now()) {
