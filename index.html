@@ -184,7 +184,7 @@ h1{font-size:32px}
     <div id="navList"></div>
     <hr>
     <button data-go="b2b"><span class="n">B</span>สำหรับโรงงาน (B2B)</button>
-    <button id="resetBtn" class="presenter-only"><span class="n">↺</span>เริ่มเดโมใหม่</button>
+    <button id="resetBtn"><span class="n">↺</span>รีเซ็ตเดโม</button>
   </div>
   <div class="mock presenter-only">โหมดผู้นำเสนอ — ปุ่มเดโมจะแสดงเฉพาะลิงก์นี้</div>
 </nav>
@@ -421,7 +421,10 @@ function go(p) {
   document.querySelector('#navList .on')?.scrollIntoView({ inline: 'center', block: 'nearest' }); // keep active tab visible in the mobile tab bar
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
-$('#resetBtn').onclick = () => { S = blank(); save(); labReset(); go('home'); toast('เริ่มเดโมใหม่แล้ว'); };
+$('#resetBtn').onclick = () => {
+  if (!confirm('รีเซ็ตเดโม? ความคืบหน้าทั้งหมด (แบบทดสอบ การจอง Skill Passport) จะถูกลบ')) return;
+  S = blank(); save(); labReset(); go('home'); toast('รีเซ็ตเดโมแล้ว — เริ่มใหม่ได้เลย');
+};
 
 // ---------- quiz ----------
 function renderQuiz() {
