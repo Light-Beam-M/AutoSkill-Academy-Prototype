@@ -1,0 +1,11 @@
+# AutoSkill App — Prototype
+
+Clickable prototype for AutoSkill Academy's business pitch: skill assessment → course → 3D Virtual Lab (robot arm pick & place) → booking → Skill Passport → Job Matching, plus a B2B quote page for factories.
+
+Static site, no build step. Three.js is vendored in `lib/`.
+
+- Live demo state: `/?demo=1#passport`
+- Run locally: `python -m http.server 8765` (or double-click `start-demo.bat` on Windows), then open http://localhost:8765
+- `render.html` renders the 3D models used in the pitch deck (`?scene=arm|arm2|plc|cap|market|stairs`)
+
+Company names, jobs and course dates in the demo are mock data.

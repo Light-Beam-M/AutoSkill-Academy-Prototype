@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>3D render</title>
+<style>html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block;width:100vw;height:100vh}</style>
+<script type="importmap">{"imports":{"three":"./lib/three.module.js"}}</script>
+</head><body><canvas id="c"></canvas>
+<script type="module">
+// Renders one model per ?scene= to a transparent canvas; used by build/render3d.sh to make deck PNGs.
+import * as THREE from 'three';
+import { setupStage, makeRobotArm, makePLCTrainer, makeCapGear, makeMarketStack, makeStairs } from './lib/models.js';
+const scene_ = new URLSearchParams(location.search).get('scene') || 'arm';
+const canvas = document.getElementById('c');
+const { renderer, scene } = setupStage(canvas, { w: innerWidth, h: innerHeight });
+renderer.setPixelRatio(1);
+const cam = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 100);
+let obj;
+if (scene_ === 'arm' || scene_ === 'arm2') {
+  const a = makeRobotArm(); obj = a.group;
+  if (scene_ === 'arm') { a.j0.rotation.y = 0.35; a.j1.rotation.z = -0.35; a.j2.rotation.z = -0.15; a.j3.rotation.z = 0.5; a.setGrip(0.4); cam.position.set(4, 4.5, 12); cam.lookAt(1.0, 2.0, 0); }
+  else { a.j0.rotation.y = 2.6; a.j1.rotation.z = -0.5; a.j2.rotation.z = 0.35; a.j3.rotation.z = -0.2; a.setGrip(0.9); cam.position.set(-6, 5, 12); cam.lookAt(-0.6, 2.0, 0); }
+} else if (scene_ === 'plc') { obj = makePLCTrainer(); cam.position.set(3.5, 4.5, 7.5); cam.lookAt(0, 1.2, 0); }
+else if (scene_ === 'cap') { obj = makeCapGear(); cam.position.set(4.5, 4.2, 5.5); cam.lookAt(0, 0.7, 0); }
+else if (scene_ === 'market') { obj = makeMarketStack(); cam.position.set(0, 6.5, 11.5); cam.lookAt(0, 0.6, 0); }
+else if (scene_ === 'stairs') { obj = makeStairs(); cam.position.set(3, 5, 12); cam.lookAt(0.3, 1.6, 0); }
+scene.add(obj);
+renderer.render(scene, cam);
+document.title = 'done';
+</script></body></html>

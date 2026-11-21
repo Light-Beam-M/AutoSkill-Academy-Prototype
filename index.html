@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AutoSkill App — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"./lib/three.module.js"}}</script>
+<style>
+:root{--navy:#0b1b33;--navy2:#16305a;--teal:#12b5a6;--teal-d:#0e8f84;--amber:#f5a524;--bg:#f2f5f9;--card:#fff;--ink:#0b1b33;--mute:#5b6b82;--line:#dfe5ee;--ok:#16a34a;--bad:#e5484d}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans Thai','Leelawadee UI',Tahoma,sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+nav{background:var(--navy);color:#fff;padding:22px 16px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.brand b{font-size:22px;letter-spacing:.3px}.brand b span{color:var(--teal)}
+.tag{font-size:12px;color:#9fb3cc;margin:0 0 22px 42px}
+.logo{width:32px;height:32px;border-radius:9px;background:var(--teal);display:grid;place-items:center;font-weight:800}
+nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;color:#cfdbeb;padding:10px 12px;border-radius:10px;margin:2px 0;font-size:15px}
+nav button:hover{background:#ffffff12}
+nav button.on{background:var(--teal);color:#fff;font-weight:600}
+nav .n{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-size:12px;flex:none}
+nav button.done .n{background:var(--amber);border-color:var(--amber);color:var(--navy)}
+nav hr{border:0;border-top:1px solid #ffffff22;margin:14px 0}
+.mock{font-size:11px;color:#8aa0bd;margin-top:16px;line-height:1.5}
+main{padding:28px 34px;max-width:1150px}
+h1{font-size:30px;margin:0 0 6px}h2{font-size:22px;margin:0 0 12px}
+.sub{color:var(--mute);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.btn{border:0;border-radius:12px;padding:12px 20px;font-weight:600;background:var(--teal);color:#fff}
+.btn:hover{background:var(--teal-d)}.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.amber{background:var(--amber);color:var(--navy)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.pill{display:inline-block;font-size:12px;padding:3px 10px;border-radius:99px;background:#e6f7f5;color:var(--teal-d);font-weight:600}
+.pill.a{background:#fff3dc;color:#9a6200}.pill.n{background:#e8eef7;color:var(--navy2)}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:20px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:22px;padding:34px;overflow:hidden}
+.hero h1{font-size:38px;line-height:1.25}.hero h1 em{color:var(--amber);font-style:normal}
+.hero p{color:#c9d6ea}
+#heroCanvas{width:100%;height:340px;display:block}
+.stat b{font-size:26px;color:var(--teal)}.stat{font-size:13px;color:var(--mute)}
+.q{margin-bottom:18px}.q p{font-weight:600;margin:0 0 8px}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;margin:6px 0}
+.opt.sel{border-color:var(--teal);background:#e6f7f5}
+.course{display:flex;flex-direction:column;gap:8px;position:relative}
+.course.rec{outline:2.5px solid var(--amber)}
+.course .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:24px;background:#e6f7f5}
+.price{font-size:22px;font-weight:800}.muted{color:var(--mute);font-size:14px}
+.bar{height:8px;border-radius:9px;background:#e8eef7;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}
+.lab{display:grid;grid-template-columns:1fr 300px;gap:16px}
+#labCanvas{width:100%;height:470px;display:block;border-radius:16px;background:radial-gradient(circle at 50% 30%,#1f3d6b,#0b1b33)}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);margin-top:10px}
+.ctl input[type=range]{width:100%;accent-color:var(--teal)}
+.task{font-size:14px;padding:10px 12px;border-radius:12px;background:#f6f8fb;margin:6px 0;display:flex;gap:8px}
+.task.ok{background:#e9f9ee;color:var(--ok);font-weight:600}
+.batch{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;background:#fff;width:100%;text-align:left}
+.batch.sel{border-color:var(--teal);background:#e6f7f5}
+input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;margin:4px 0 12px}
+.cert{background:linear-gradient(135deg,#fff,#eefaf8);border:2px solid var(--teal);border-radius:18px;padding:26px;position:relative;overflow:hidden}
+.cert:after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:#12b5a61a}
+.badge{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;text-align:center;color:var(--mute)}
+.badge .b{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:#e8eef7;filter:grayscale(1);opacity:.5}
+.badge.on .b{background:var(--amber);filter:none;opacity:1}
+.job{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center}
+.job .lg{width:56px;height:56px;border-radius:14px;background:var(--navy2);color:#fff;display:grid;place-items:center;font-weight:800}
+.match{font-size:26px;font-weight:800;color:var(--teal)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
+.toast.show{opacity:1}
+.hide{display:none!important}
+@media (max-width:860px){.app{grid-template-columns:1fr}nav{position:static;height:auto}.hero,.lab,.g2,.g3,.g4{grid-template-columns:1fr}main{padding:18px 16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav>
+  <div class="brand"><div class="logo">A</div><b>Auto<span>Skill</span></b></div>
+  <div class="tag">Play · Code · Grow</div>
+  <div id="navList"></div>
+  <hr>
+  <button data-go="b2b"><span class="n">🏭</span>สำหรับโรงงาน (B2B)</button>
+  <button id="resetBtn"><span class="n">↺</span>เริ่มเดโมใหม่</button>
+  <div class="mock">Prototype สำหรับนำเสนอ — ข้อมูลบริษัท ตำแหน่งงาน และรอบอบรมเป็นข้อมูลจำลอง</div>
+</nav>
+<main id="main">
+
+<!-- HOME -->
+<section data-page="home">
+  <div class="hero">
+    <div>
+      <span class="pill a">ศูนย์ฝึก Automation แบบลงมือจริง</span>
+      <h1>จากห้องเรียน สู่<em>สายการผลิตจริง</em></h1>
+      <p>ฝึก PLC และแขนกลอุตสาหกรรมกับอุปกรณ์ที่โรงงานใช้จริง สอบรับ Skill Passport แล้วให้เราจับคู่คุณกับโรงงานที่กำลังหาคน</p>
+      <button class="btn amber" data-go="assess">เริ่มทดสอบทักษะ (2 นาที) →</button>
+      <button class="btn ghost" data-go="courses" style="margin-left:8px">ดูหลักสูตร</button>
+    </div>
+    <canvas id="heroCanvas"></canvas>
+  </div>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="card stat"><b>10 คน</b><br>ต่อรุ่น ทุกคนได้จับอุปกรณ์</div>
+    <div class="card stat"><b>4 หลักสูตร</b><br>PLC · HMI · Robot · Smart Factory</div>
+    <div class="card stat"><b>฿7,500</b><br>ต่อคอร์ส สำหรับบุคคล</div>
+    <div class="card stat"><b>Job Matching</b><br>ส่งต่อโปรไฟล์ให้โรงงานพันธมิตร</div>
+  </div>
+</section>
+
+<!-- ASSESS -->
+<section data-page="assess" class="hide">
+  <h1>แบบทดสอบวัดระดับ</h1><p class="sub">ตอบ 5 ข้อ เราจะแนะนำหลักสูตรที่เหมาะกับคุณ</p>
+  <div class="grid g2"><div class="card" id="quiz"></div>
+  <div class="card" id="quizResult"><h2>ผลลัพธ์</h2><p class="muted">ตอบให้ครบทุกข้อเพื่อดูระดับทักษะของคุณ</p></div></div>
+</section>
+
+<!-- COURSES -->
+<section data-page="courses" class="hide">
+  <h1>หลักสูตร</h1><p class="sub">ทุกหลักสูตรเรียนกับชุดฝึกจริง 60% ของเวลาเรียน และมี Virtual Lab ให้ฝึกต่อที่บ้าน</p>
+  <div class="grid g2" id="courseList"></div>
+</section>
+
+<!-- LAB -->
+<section data-page="lab" class="hide">
+  <h1>Virtual Lab: หยิบ–วางชิ้นงาน</h1><p class="sub">ภารกิจแรกของคอร์ส Robot — สั่งแขนกลหยิบกล่องสีส้มไปวางในโซนสีเขียว (ลากหมุนมุมกล้องได้)</p>
+  <div class="lab">
+    <canvas id="labCanvas"></canvas>
+    <div class="card ctl">
+      <h2 style="margin-bottom:4px">แผงควบคุม</h2>
+      <label>J1 ฐานหมุน <span id="v0"></span></label><input type="range" id="s0" min="-3.14" max="3.14" step="0.01">
+      <label>J2 ไหล่ <span id="v1"></span></label><input type="range" id="s1" min="-1.4" max="0.8" step="0.01">
+      <label>J3 ข้อศอก <span id="v2"></span></label><input type="range" id="s2" min="-2.4" max="0.9" step="0.01">
+      <label>J4 ข้อมือ <span id="v3"></span></label><input type="range" id="s3" min="-2" max="2" step="0.01">
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn" id="gripBtn" style="flex:1">✊ หนีบ</button>
+        <button class="btn amber" id="autoBtn" style="flex:1">▶ รันโปรแกรม</button>
+      </div>
+      <div style="margin-top:14px">
+        <div class="task" id="t1">○ เลื่อนหัวจับไปที่กล่อง</div>
+        <div class="task" id="t2">○ หนีบกล่องขึ้นมา</div>
+        <div class="task" id="t3">○ วางในโซนสีเขียว</div>
+      </div>
+      <button class="btn ghost" id="labReset" style="width:100%;margin-top:8px">รีเซ็ตภารกิจ</button>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK -->
+<section data-page="book" class="hide">
+  <h1>จองรอบอบรม</h1><p class="sub" id="bookCourseName"></p>
+  <div class="grid g2">
+    <div class="card"><h2>เลือกรุ่น</h2><div id="batchList"></div></div>
+    <div class="card"><h2>ข้อมูลผู้เรียน</h2>
+      <label class="muted">ชื่อ–นามสกุล</label><input class="f" id="fName" placeholder="เช่น สมชาย ใจดี">
+      <label class="muted">สถานะ</label>
+      <select class="f" id="fType"><option>นักศึกษา ปวส. / วิทยาลัยเทคนิค</option><option>พนักงานโรงงาน / ช่างเทคนิค</option><option>บุคคลทั่วไป</option></select>
+      <label class="muted">ชำระเงิน</label>
+      <select class="f" id="fPay"><option>PromptPay QR</option><option>ผ่อน 0% 3 เดือน</option><option>บริษัทออกค่าใช้จ่าย (ออกใบกำกับภาษี)</option></select>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="muted">ยอดชำระ</span><span class="price" id="bookPrice"></span></div>
+      <button class="btn" id="bookBtn" style="width:100%;margin-top:14px">ยืนยันการจอง</button>
+      <p class="muted" style="font-size:12px">* เดโม: ไม่มีการตัดเงินจริง</p>
+    </div>
+  </div>
+</section>
+
+<!-- PASSPORT -->
+<section data-page="passport" class="hide">
+  <h1>Skill Passport</h1><p class="sub">หลักฐานทักษะที่โรงงานตรวจสอบได้ — ทุกโมดูลบันทึกจากการลงมือทำจริง</p>
+  <div class="grid g2">
+    <div class="cert" id="cert"></div>
+    <div class="card"><h2>เหรียญทักษะ</h2><div class="grid g3" id="badges"></div></div>
+  </div>
+</section>
+
+<!-- JOBS -->
+<section data-page="jobs" class="hide">
+  <h1>Job Matching</h1><p class="sub">ตำแหน่งจากโรงงานพันธมิตร เรียงตามความตรงกับ Skill Passport ของคุณ</p>
+  <div class="grid" id="jobList"></div>
+</section>
+
+<!-- B2B -->
+<section data-page="b2b" class="hide">
+  <h1>หลักสูตรเฉพาะองค์กร (Tailor-made)</h1><p class="sub">บอกเครื่องจักรและปัญหาหน้างาน เราออกแบบหลักสูตรและอบรมถึงโรงงาน</p>
+  <div class="grid g2">
+    <div class="card">
+      <label class="muted">ชื่อโรงงาน</label><input class="f" id="bName" value="บริษัท ตัวอย่าง จำกัด (จ.ชลบุรี)">
+      <label class="muted">ระบบที่ใช้ในโรงงาน</label>
+      <select class="f" id="bSys"><option>PLC Mitsubishi / Siemens</option><option>แขนกล FANUC / ABB / KUKA</option><option>Cobot (Universal Robots ฯลฯ)</option><option>HMI / SCADA / IIoT</option></select>
+      <label class="muted">จำนวนพนักงานที่จะอบรม: <b id="bNv">20</b> คน</label>
+      <input type="range" id="bN" min="5" max="60" value="20" style="width:100%;accent-color:#12b5a6">
+      <label class="muted" style="display:block;margin-top:10px">สถานที่</label>
+      <select class="f" id="bLoc"><option>In-house ที่โรงงาน</option><option>ศูนย์ฝึก AutoSkill</option></select>
+    </div>
+    <div class="card" id="quote"></div>
+  </div>
+</section>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from './lib/OrbitControls.js';
+import { setupStage, makeRobotArm, COLORS } from './lib/models.js';
+
+// ---------- data (prices from AutoSkill cost-benefit model; companies/jobs are mock) ----------
+const COURSES = [
+  { id: 'plc1', ic: '⚡', name: 'PLC พื้นฐานสำหรับงานอุตสาหกรรม', lvl: 'Beginner', hrs: 18, desc: 'Ladder Logic, I/O, Timer/Counter ต่อวงจรกับชุดฝึกจริง', skills: ['PLC'] },
+  { id: 'plc2', ic: '🖥️', name: 'PLC ขั้นสูง + HMI', lvl: 'Intermediate', hrs: 24, desc: 'Data handling, HMI, แก้ปัญหาเครื่องจักรหยุด (Troubleshooting)', skills: ['PLC', 'HMI'] },
+  { id: 'rob', ic: '🦾', name: 'Industrial Robot Programming', lvl: 'Intermediate', hrs: 24, desc: 'Teach pendant, Pick & Place, Safety zone กับแขนกลจริง + Virtual Lab', skills: ['Robot'], lab: true },
+  { id: 'sf', ic: '🏭', name: 'Smart Factory & IIoT Integration', lvl: 'Advanced', hrs: 24, desc: 'เชื่อม PLC–Robot–Sensor เก็บข้อมูลการผลิตขึ้น Dashboard', skills: ['PLC', 'Robot', 'IIoT'] },
+];
+const PRICE = 7500;
+const BATCHES = [ ['รุ่น 1', 'ส. 9 – อา. 17 ม.ค. 2570', 'เสาร์–อาทิตย์', 3], ['รุ่น 2', 'จ. 1 – พ. 3 ก.พ. 2570', 'ต่อเนื่อง 3 วัน', 6], ['รุ่น 3', 'ส. 6 – อา. 14 มี.ค. 2570', 'เสาร์–อาทิตย์', 10] ];
+const JOBS = [
+  { co: 'บริษัท ออโต้พาร์ท ตัวอย่าง', loc: 'นิคมฯ อมตะซิตี้ ชลบุรี', pos: 'ช่างเทคนิค Robot Cell', need: ['Robot', 'PLC'], sal: '18,000 – 24,000' },
+  { co: 'บริษัท อิเล็กทรอนิกส์ ตัวอย่าง', loc: 'นิคมฯ เหมราช ระยอง', pos: 'Maintenance Technician (PLC)', need: ['PLC', 'HMI'], sal: '17,000 – 22,000' },
+  { co: 'บริษัท ฟู้ดแพ็ค ตัวอย่าง', loc: 'ปทุมธานี', pos: 'Automation Technician', need: ['PLC', 'Robot', 'IIoT'], sal: '20,000 – 28,000' },
+];
+const QUIZ = [
+  ['PLC ย่อมาจากอะไร', ['Programmable Logic Controller', 'Power Line Control', 'Process Level Computer'], 0],
+  ['ใน Ladder Logic หน้าสัมผัส NO คืออะไร', ['ปกติปิด', 'ปกติเปิด', 'หน้าสัมผัสหน่วงเวลา'], 1],
+  ['เคยต่อสาย I/O เข้ากับ PLC จริงหรือไม่', ['ไม่เคย', 'เคยในห้องเรียน', 'ทำเป็นประจำที่โรงงาน'], null],
+  ['อุปกรณ์ใดใช้สอนตำแหน่ง (Teach) ให้แขนกล', ['Teach Pendant', 'Multimeter', 'Oscilloscope'], 0],
+  ['เมื่อคนเข้าเขตทำงานของแขนกล ระบบควรทำอะไร', ['ทำงานต่อด้วยความเร็วเดิม', 'หยุด/ลดความเร็ว (Safety)', 'ส่งเสียงอย่างเดียว'], 1],
+];
+
+// ---------- state ----------
+const blank = () => ({ answers: {}, level: null, rec: null, course: 'rob', batch: null, booking: null, lab: false, visited: {} });
+let S; try { S = JSON.parse(localStorage.getItem('autoskill-demo')) || blank(); } catch { S = blank(); }
+// ?demo=1 preloads a finished learner journey, so the presenter can jump straight to Passport/Jobs.
+if (new URLSearchParams(location.search).has('demo')) S = { ...blank(), answers: { 0: 0, 1: 1, 2: 1, 3: 1, 4: 1 }, level: 'Intermediate', rec: 'rob', batch: 0, lab: true, booking: { name: 'สมชาย ใจดี', type: 'นักศึกษา ปวส. / วิทยาลัยเทคนิค', code: 'AS-7K2QD', course: 'rob', batch: 0 }, visited: { courses: true } };
+const save = () => { try { localStorage.setItem('autoskill-demo', JSON.stringify(S)); } catch {} };
+const $ = s => document.querySelector(s);
+const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2200); };
+const course = () => COURSES.find(c => c.id === S.course);
+
+// ---------- navigation ----------
+const STEPS = [['home', 'หน้าแรก'], ['assess', 'วัดระดับทักษะ'], ['courses', 'เลือกหลักสูตร'], ['lab', 'Virtual Lab 3D'], ['book', 'จองรอบอบรม'], ['passport', 'Skill Passport'], ['jobs', 'จับคู่งาน']];
+function renderNav(cur) {
+  const done = { assess: !!S.level, courses: !!S.course && S.visited.courses, lab: S.lab, book: !!S.booking, passport: !!S.booking, jobs: S.visited.jobs };
+  $('#navList').innerHTML = STEPS.map(([k, l], i) => `<button data-go="${k}" class="${k === cur ? 'on' : ''} ${done[k] ? 'done' : ''}"><span class="n">${done[k] ? '✓' : i}</span>${l}</button>`).join('');
+  document.querySelectorAll('nav [data-go="b2b"]').forEach(b => b.classList.toggle('on', cur === 'b2b'));
+}
+function go(p) {
+  document.querySelectorAll('[data-page]').forEach(s => s.classList.toggle('hide', s.dataset.page !== p));
+  S.visited[p] = true; save(); renderNav(p);
+  ({ assess: renderQuiz, courses: renderCourses, lab: startLab, book: renderBook, passport: renderPassport, jobs: renderJobs, b2b: renderQuote })[p]?.();
+  scrollTo(0, 0); location.hash = p;
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
+$('#resetBtn').onclick = () => { S = blank(); save(); labReset(); go('home'); toast('เริ่มเดโมใหม่แล้ว'); };
+
+// ---------- quiz ----------
+function renderQuiz() {
+  $('#quiz').innerHTML = QUIZ.map(([q, opts], i) => `<div class="q"><p>${i + 1}. ${q}</p>${opts.map((o, j) => `<button class="opt ${S.answers[i] === j ? 'sel' : ''}" data-q="${i}" data-o="${j}">${o}</button>`).join('')}</div>`).join('');
+  $('#quiz').querySelectorAll('.opt').forEach(b => b.onclick = () => { S.answers[b.dataset.q] = +b.dataset.o; save(); renderQuiz(); });
+  if (Object.keys(S.answers).length < QUIZ.length) return;
+  let score = 0; QUIZ.forEach(([, , ans], i) => { score += ans === null ? S.answers[i] : (S.answers[i] === ans ? 2 : 0); });
+  const pct = Math.round(score / 10 * 100);
+  const [lvl, rec] = pct < 45 ? ['Beginner', 'plc1'] : pct < 80 ? ['Intermediate', 'rob'] : ['Advanced', 'sf'];
+  S.level = lvl; S.rec = rec; S.course = rec; save(); renderNav('assess');
+  const c = course();
+  $('#quizResult').innerHTML = `<h2>ผลลัพธ์</h2><div class="match">${pct}%</div><div class="bar" style="margin:8px 0 14px"><i style="width:${pct}%"></i></div>
+    <p>ระดับของคุณ: <span class="pill">${lvl}</span></p><p class="muted">หลักสูตรที่แนะนำ</p>
+    <div class="card course rec"><div class="ic">${c.ic}</div><b>${c.name}</b><span class="muted">${c.desc}</span></div>
+    <button class="btn" style="margin-top:14px" data-go="courses">ดูหลักสูตรทั้งหมด →</button>`;
+}
+
+// ---------- courses ----------
+function renderCourses() {
+  $('#courseList').innerHTML = COURSES.map(c => `<div class="card course ${S.rec === c.id ? 'rec' : ''}">
+    ${S.rec === c.id ? '<span class="pill a" style="position:absolute;right:16px;top:16px">แนะนำสำหรับคุณ</span>' : ''}
+    <div class="ic">${c.ic}</div><b style="font-size:18px">${c.name}</b>
+    <span class="muted">${c.desc}</span>
+    <div><span class="pill n">${c.lvl}</span> <span class="pill n">${c.hrs} ชม.</span> <span class="pill n">Hands-on 60%</span>${c.lab ? ' <span class="pill">มี Virtual Lab 3D</span>' : ''}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="price">฿${PRICE.toLocaleString()}</span>
+    <span>${c.lab ? `<button class="btn ghost" data-lab="${c.id}">ลอง Lab</button> ` : ''}<button class="btn" data-book="${c.id}">จอง</button></span></div></div>`).join('');
+  $('#courseList').querySelectorAll('[data-book]').forEach(b => b.onclick = () => { S.course = b.dataset.book; save(); go('book'); });
+  $('#courseList').querySelectorAll('[data-lab]').forEach(b => b.onclick = () => { S.course = b.dataset.lab; save(); go('lab'); });
+}
+
+// ---------- booking ----------
+function renderBook() {
+  $('#bookCourseName').textContent = `${course().name} · ${course().hrs} ชั่วโมง · รุ่นละ 10 คน`;
+  $('#bookPrice').textContent = '฿' + PRICE.toLocaleString();
+  $('#batchList').innerHTML = BATCHES.map(([n, d, t, left], i) => `<button class="batch ${S.batch === i ? 'sel' : ''}" data-b="${i}"><span><b>${n}</b> · ${d}<br><span class="muted">${t} · ศูนย์ฝึก AutoSkill</span></span><span class="pill ${left <= 3 ? 'a' : ''}">เหลือ ${left} ที่</span></button>`).join('');
+  $('#batchList').querySelectorAll('[data-b]').forEach(b => b.onclick = () => { S.batch = +b.dataset.b; save(); renderBook(); });
+  if (S.booking) { $('#fName').value = S.booking.name; }
+}
+$('#bookBtn').onclick = () => {
+  const name = $('#fName').value.trim();
+  if (S.batch === null) return toast('กรุณาเลือกรุ่นก่อน');
+  if (name.length < 3) return toast('กรุณากรอกชื่อ–นามสกุล');
+  S.booking = { name, type: $('#fType').value, code: 'AS-' + Math.random().toString(36).slice(2, 7).toUpperCase(), course: S.course, batch: S.batch };
+  save(); toast('จองสำเร็จ! รหัส ' + S.booking.code); go('passport');
+};
+
+// ---------- passport ----------
+function skillsOwned() {
+  const s = new Set();
+  if (S.booking) COURSES.find(c => c.id === S.booking.course).skills.forEach(k => s.add(k));
+  if (S.lab) s.add('Robot');
+  if (S.level === 'Advanced') s.add('PLC');
+  return s;
+}
+function renderPassport() {
+  const b = S.booking, sk = skillsOwned();
+  $('#cert').innerHTML = b ? `<span class="pill">AutoSkill Skill Passport</span>
+    <h2 style="margin:12px 0 2px;font-size:26px">${b.name}</h2><p class="muted" style="margin:0">${b.type}</p>
+    <p style="margin:16px 0 4px">หลักสูตร: <b>${COURSES.find(c => c.id === b.course).name}</b></p>
+    <p class="muted" style="margin:0">${BATCHES[b.batch][0]} · ${BATCHES[b.batch][1]}</p>
+    <p class="muted">ระดับเริ่มต้น: ${S.level || '-'} · รหัส ${b.code}</p>
+    <div class="bar"><i style="width:${S.lab ? 35 : 10}%"></i></div>
+    <p class="muted" style="font-size:12px">ความคืบหน้า ${S.lab ? 35 : 10}% · ใบรับรองออกเมื่อผ่านสอบปฏิบัติ (Practical Exam)</p>`
+    : `<h2>ยังไม่มี Passport</h2><p class="muted">จองหลักสูตรแรกเพื่อสร้าง Skill Passport</p><button class="btn" data-go="courses">เลือกหลักสูตร</button>`;
+  const B = [['🧪', 'วัดระดับแล้ว', !!S.level], ['⚡', 'PLC', sk.has('PLC')], ['🖥️', 'HMI', sk.has('HMI')], ['🦾', 'Robot Pick & Place', S.lab], ['🌐', 'IIoT', sk.has('IIoT')], ['🏆', 'Certified', false]];
+  $('#badges').innerHTML = B.map(([i, l, on]) => `<div class="badge ${on ? 'on' : ''}"><div class="b">${i}</div>${l}</div>`).join('') +
+    `<div style="grid-column:1/-1"><button class="btn" data-go="jobs" style="width:100%">ดูงานที่ตรงกับทักษะ →</button></div>`;
+}
+
+// ---------- jobs ----------
+function renderJobs() {
+  const sk = skillsOwned();
+  const rows = JOBS.map(j => ({ ...j, m: Math.round(40 + 60 * j.need.filter(n => sk.has(n)).length / j.need.length) })).sort((a, b) => b.m - a.m);
+  $('#jobList').innerHTML = rows.map(j => `<div class="card job"><div class="lg">${j.co.split(' ')[1][0]}</div>
+    <div><b>${j.pos}</b><br><span class="muted">${j.co} · ${j.loc}</span><br>${j.need.map(n => `<span class="pill ${sk.has(n) ? '' : 'n'}">${sk.has(n) ? '✓ ' : ''}${n}</span>`).join(' ')} <span class="muted">· ฿${j.sal}/เดือน</span></div>
+    <div style="text-align:right"><div class="match">${j.m}%</div><button class="btn" data-apply>สมัครด้วย Passport</button></div></div>`).join('') +
+    `<p class="muted">* ข้อมูลบริษัทและตำแหน่งเป็นข้อมูลจำลองเพื่อสาธิต</p>`;
+  $('#jobList').querySelectorAll('[data-apply]').forEach(b => b.onclick = () => { b.textContent = 'ส่งโปรไฟล์แล้ว ✓'; b.disabled = true; toast('ส่ง Skill Passport ให้ฝ่าย HR แล้ว'); });
+}
+
+// ---------- B2B quote (฿75,000 per batch of up to 10, from the cost-benefit model) ----------
+function renderQuote() {
+  const n = +$('#bN').value, batches = Math.ceil(n / 10), total = batches * 75000;
+  $('#bNv').textContent = n;
+  $('#quote').innerHTML = `<h2>ใบเสนอราคาเบื้องต้น</h2><p class="muted">${$('#bName').value}</p>
+    <p>หลักสูตร Tailor-made: <b>${$('#bSys').value}</b><br>${$('#bLoc').value}</p>
+    <p>${n} คน → <b>${batches} รุ่น</b> (รุ่นละไม่เกิน 10 คน) × ฿75,000</p>
+    <div class="price" style="font-size:34px;color:#0e8f84">฿${total.toLocaleString()}</div>
+    <p class="muted">≈ ฿${Math.round(total / n).toLocaleString()} ต่อคน · รวมวิเคราะห์ปัญหาหน้างาน + ติดตามผลหลังอบรม 30 วัน</p>
+    <p class="muted" style="font-size:13px">หลักสูตรยื่นรับรองกับกรมพัฒนาฝีมือแรงงาน เพื่อให้องค์กรนำค่าใช้จ่ายไปลดหย่อนภาษีได้</p>
+    <button class="btn" onclick="this.textContent='ส่งคำขอแล้ว ✓ ทีมงานจะติดต่อกลับใน 1 วันทำการ';this.disabled=true">ขอนัดสำรวจหน้างาน</button>`;
+}
+['#bN', '#bSys', '#bLoc', '#bName'].forEach(s => $(s).addEventListener('input', renderQuote));
+
+// ---------- hero 3D ----------
+{
+  const c = $('#heroCanvas'), { renderer, scene } = setupStage(c, { w: c.clientWidth || 500, h: 340 });
+  const cam = new THREE.PerspectiveCamera(32, (c.clientWidth || 500) / 340, 0.1, 100); cam.position.set(6, 4.5, 11); cam.lookAt(0.8, 2.1, 0);
+  const a = makeRobotArm(); scene.add(a.group);
+  const t0 = performance.now();
+  (function loop(t) {
+    const k = (t - t0) / 1000;
+    a.j0.rotation.y = Math.sin(k * 0.5) * 0.9; a.j1.rotation.z = -0.45 + Math.sin(k * 0.8) * 0.2; a.j2.rotation.z = -0.3 + Math.sin(k * 0.8 + 1) * 0.35; a.j3.rotation.z = 0.6 + Math.sin(k) * 0.3; a.setGrip((Math.sin(k * 1.6) + 1) / 2);
+    if (!c.closest('.hide')) renderer.render(scene, cam);
+    requestAnimationFrame(loop);
+  })(t0);
+}
+
+// ---------- Virtual Lab ----------
+let lab;
+const SH = 1.3, L1 = 2.3, L2 = 1.9, GRIP = 0.9; // shoulder height, link lengths, wrist→finger-centre
+function ik(x, y, z) { // returns joint angles that put the finger centre at (x,y,z) with the gripper pointing down
+  const j0 = Math.atan2(-z, x), r = Math.hypot(x, z), px = r, py = y + GRIP - SH, d = Math.min(Math.hypot(px, py), L1 + L2 - 1e-3);
+  const f1 = Math.atan2(py, px) + Math.acos((L1 * L1 + d * d - L2 * L2) / (2 * L1 * d));
+  const ex = L1 * Math.cos(f1), ey = L1 * Math.sin(f1), f2 = Math.atan2(py - ey, px - ex);
+  const j1 = f1 - Math.PI / 2, j2 = f2 - j1;
+  return [j0, j1, j2, -(j1 + j2)];
+}
+function startLab() {
+  if (lab) return;
+  const c = $('#labCanvas'), w = c.clientWidth, h = c.clientHeight;
+  const { renderer, scene, ground } = setupStage(c, { w, h });
+  const cam = new THREE.PerspectiveCamera(38, w / h, 0.1, 100); cam.position.set(6, 6.5, 9.5);
+  const ctl = new OrbitControls(cam, c); ctl.target.set(0.8, 1.2, 0); ctl.enableDamping = true; ctl.maxPolarAngle = 1.45; ctl.update();
+  const grid = new THREE.GridHelper(12, 24, 0x2c4a78, 0x1d3559); grid.position.y = 0.002; scene.add(grid);
+  ground.material.opacity = 0.35;
+  const a = makeRobotArm(); scene.add(a.group);
+  const BOX0 = new THREE.Vector3(2.7, 0.2, 0.6), ZONE = new THREE.Vector3(-1.0, 0, 2.6);
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), new THREE.MeshPhysicalMaterial({ color: 0xff7a1a, roughness: 0.4, clearcoat: 0.5 })); box.castShadow = true; scene.add(box);
+  const zone = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.03, 48), new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 0.5, transparent: true, opacity: 0.75 })); zone.position.copy(ZONE).setY(0.015); scene.add(zone);
+  const tip = new THREE.Object3D(); tip.position.y = -GRIP; a.j3.add(tip);
+  lab = { a, box, tip, BOX0, ZONE, q: [0, -0.4, -0.6, 1.0], grip: 0, held: false, steps: [false, false, false], anim: null };
+  const sl = [0, 1, 2, 3].map(i => $('#s' + i));
+  sl.forEach((s, i) => s.oninput = () => { lab.anim = null; lab.q[i] = +s.value; });
+  const sync = () => sl.forEach((s, i) => { s.value = lab.q[i]; $('#v' + i).textContent = (lab.q[i] * 57.3).toFixed(0) + '°'; });
+  $('#gripBtn').onclick = () => setGrip(lab.grip ? 0 : 1);
+  $('#autoBtn').onclick = autoRun;
+  $('#labReset').onclick = labReset;
+  labReset();
+  const wp = new THREE.Vector3(); let last = performance.now();
+  (function loop(now = performance.now()) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (lab.anim) lab.anim(dt);
+    const [j0, j1, j2, j3] = lab.q; a.j0.rotation.y = j0; a.j1.rotation.z = j1; a.j2.rotation.z = j2; a.j3.rotation.z = j3; a.setGrip(lab.grip ? 0.75 : 0);
+    a.group.updateMatrixWorld(true); tip.getWorldPosition(wp);
+    const near = wp.distanceTo(box.position) < 0.38;
+    if (near) mark(0);
+    if (lab.held) box.position.copy(wp);
+    sync(); ctl.update();
+    if (!c.closest('.hide')) renderer.render(scene, cam);
+    requestAnimationFrame(loop);
+  })();
+}
+function setGrip(g) {
+  const wp = new THREE.Vector3(); lab.tip.getWorldPosition(wp);
+  lab.grip = g; $('#gripBtn').textContent = g ? '✋ ปล่อย' : '✊ หนีบ';
+  if (g && wp.distanceTo(lab.box.position) < 0.38) { lab.held = true; mark(0); mark(1); toast('หนีบกล่องแล้ว!'); }
+  if (!g && lab.held) {
+    lab.held = false; lab.box.position.y = 0.2;
+    const inZone = Math.hypot(lab.box.position.x - lab.ZONE.x, lab.box.position.z - lab.ZONE.z) < 0.55;
+    if (inZone) { mark(2); S.lab = true; save(); renderNav('lab'); toast('🎉 ภารกิจสำเร็จ! ได้รับเหรียญ Robot Pick & Place'); }
+    else toast('วางนอกโซน ลองอีกครั้ง');
+  }
+}
+function mark(i) { if (lab.steps[i]) return; lab.steps[i] = true; const el = $('#t' + (i + 1)); el.classList.add('ok'); el.textContent = '✓' + el.textContent.slice(1); }
+function labReset() {
+  if (!lab) return;
+  lab.anim = null; lab.held = false; lab.grip = 0; lab.q = [0, -0.4, -0.6, 1.0]; lab.box.position.copy(lab.BOX0); lab.steps = [false, false, false];
+  ['เลื่อนหัวจับไปที่กล่อง', 'หนีบกล่องขึ้นมา', 'วางในโซนสีเขียว'].forEach((t, i) => { const el = $('#t' + (i + 1)); el.className = 'task'; el.textContent = '○ ' + t; });
+  $('#gripBtn').textContent = '✊ หนีบ';
+}
+function autoRun() { // a scripted "PLC program": approach → grip → lift → move → place → release → home
+  labReset();
+  const B = lab.BOX0, Z = lab.ZONE;
+  const seq = [[ik(B.x, 1.4, B.z)], [ik(B.x, 0.2, B.z)], ['grip', 1], [ik(B.x, 1.6, B.z)], [ik(Z.x, 1.6, Z.z)], [ik(Z.x, 0.2, Z.z)], ['grip', 0], [ik(Z.x, 1.5, Z.z)], [[0, -0.4, -0.6, 1.0]]];
+  let i = 0, from = null, t = 0;
+  lab.anim = dt => {
+    const st = seq[i]; if (!st) { lab.anim = null; return; }
+    if (st[0] === 'grip') { setGrip(st[1]); i++; t = 0; from = null; return; }
+    if (!from) { from = [...lab.q]; t = 0; }
+    t = Math.min(1, t + dt / 0.9); // ~0.9 s per move, frame-rate independent
+    const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+    let tgt = st[0].slice(); const d = tgt[0] - from[0]; if (Math.abs(d) > Math.PI) tgt[0] -= Math.sign(d) * 2 * Math.PI;
+    lab.q = from.map((v, k) => v + (tgt[k] - v) * e);
+    if (t >= 1) { i++; from = null; }
+  };
+}
+
+go(location.hash.slice(1) || 'home');
+addEventListener('hashchange', () => { const p = location.hash.slice(1); if (document.querySelector(`[data-page="${p}"]`)?.classList.contains('hide')) go(p); });
+window.__demo = () => ({ lab: lab && { q: lab.q, held: lab.held, box: lab.box.position.toArray(), steps: lab.steps }, S }); // debug hook for testing
+</script>
+</body>
+</html>
