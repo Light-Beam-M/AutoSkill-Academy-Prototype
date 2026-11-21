@@ -112,6 +112,41 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);max-width:90vw;text-align:center;background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
 .toast.show{opacity:1}
 .hide{display:none!important}
+body{background:linear-gradient(180deg,#e9f2f6 0,#f2f5f9 320px)}
+section:not(.hide){animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero h1{font-size:46px;line-height:1.2;margin:14px 0 12px}
+.hero p{font-size:16.5px;line-height:1.7;max-width:540px}
+#heroCanvas{height:400px}
+.heroBtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn.ghostDark{background:#ffffff14;color:#fff;border:1.5px solid #ffffff40}.btn.ghostDark:hover{background:#ffffff26}
+.heroTrust{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;font-size:14px;color:#c9d6ea}
+.heroTrust span{display:inline-flex;gap:6px;align-items:center}.heroTrust svg{color:#7fe3d8}
+.stats{margin-top:-28px;padding:0 22px;position:relative}
+.stat{display:flex;gap:14px;align-items:center}
+.stat .si{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#e6f7f5;color:var(--teal-d)}
+.stat b{display:block;font-size:22px;line-height:1.2}
+.secHead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:40px 0 16px}
+.secHead h2{font-size:26px;margin:2px 0 0}
+.kick{font-size:12.5px;font-weight:700;letter-spacing:2px;color:var(--teal-d);text-transform:uppercase}
+.jcard{display:flex;gap:14px;align-items:flex-start;text-align:left;border:1px solid var(--line);background:#fff;border-radius:16px;padding:18px;box-shadow:var(--shadow);width:100%}
+.jcard:hover{box-shadow:var(--shadow-h);transform:translateY(-2px);border-color:#bfe7e2}
+.jcard .ji{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#12b5a6,#0e8f84);color:#fff}
+.jcard small{color:var(--teal-d);font-weight:700;font-size:12px;letter-spacing:1px}
+.jcard b{display:block;font-size:17px;margin:2px 0 4px}
+.jcard span{color:var(--mute);font-size:14px;line-height:1.5}
+.jcard .go{margin-left:auto;color:#b6c2d2;align-self:center}
+.jcard.done .ji{background:var(--amber);color:var(--navy)}
+.mini{display:flex;flex-direction:column;gap:6px;text-align:left;width:100%}
+.mini .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#e6f7f5;color:var(--teal-d);margin-bottom:6px}
+.band{margin-top:40px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;background:radial-gradient(circle at 90% 0,#12b5a640,transparent 50%),linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:22px;padding:30px 34px}
+.band h2{font-size:26px;margin:4px 0 6px}.band p{margin:0;color:#c9d6ea}
+.foot{margin:36px 0 8px;text-align:center;color:var(--mute);font-size:13.5px;line-height:1.8}.foot b span{color:var(--teal-d)}.foot span{font-size:12px}
+.stepper{display:flex;gap:6px;margin:-6px 0 22px}
+.stepper button{flex:1;border:0;background:none;padding:0;text-align:left;font-size:12.5px;color:var(--mute)}
+.stepper i{display:block;height:5px;border-radius:9px;background:#dbe3ee;margin-bottom:7px}
+.stepper .done i{background:var(--amber)}.stepper .on i{background:var(--teal)}.stepper .on{color:var(--navy);font-weight:700}
+h1{font-size:32px}
 @media (max-width:860px){
   .app{grid-template-columns:minmax(0,1fr)}
   nav{min-width:0}
@@ -125,9 +160,9 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
   main{padding:16px 14px 40px}
   h1{font-size:24px}h2{font-size:19px}
   .hero{grid-template-columns:minmax(0,1fr);padding:22px 20px;gap:6px}.hero h1{font-size:28px}
-  #heroCanvas{height:210px}
+  #heroCanvas{height:220px}.hero h1{font-size:30px}.stats{margin-top:14px;padding:0}.secHead{margin:28px 0 12px}.secHead h2{font-size:21px}.band{padding:22px}.band h2{font-size:21px}.stepper{display:none}.jcard{padding:14px}
   .hero .btn{margin:6px 6px 0 0!important}
-  .g2,.g3,.lab{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}
+  .g2,.g3,.lab{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}#homeCourses{grid-template-columns:1fr}
   .lab{height:auto}.stage{height:55vh}
   .card{padding:16px}
   .job{grid-template-columns:1fr}.job .acts .btn{flex:1;text-align:center}.job > div:last-child{order:-1;text-align:left!important;display:flex;align-items:baseline;gap:8px}
@@ -152,25 +187,34 @@ input.f,select.f{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
   <div class="mock">Prototype สำหรับนำเสนอ — รอบอบรม ตำแหน่งงาน และช่วงเงินเดือนเป็นข้อมูลจำลอง</div>
 </nav>
 <main id="main">
+<div class="stepper" id="stepper"></div>
 
 <!-- HOME -->
 <section data-page="home">
   <div class="hero">
     <div>
       <span class="pill a">ศูนย์ฝึก Automation แบบลงมือจริง</span>
-      <h1>จากห้องเรียน สู่<em>สายการผลิตจริง</em></h1>
+      <h1>จากห้องเรียน<br>สู่<em>สายการผลิตจริง</em></h1>
       <p>ฝึก PLC และแขนกลอุตสาหกรรมกับอุปกรณ์ที่โรงงานใช้จริง สอบรับ Skill Passport แล้วดูว่าทักษะของคุณเหมาะกับงานตำแหน่งไหน</p>
-      <button class="btn amber" data-go="assess">เริ่มทดสอบทักษะ (2 นาที) →</button>
-      <button class="btn ghost" data-go="courses" style="margin-left:8px">ดูหลักสูตร</button>
+      <div class="heroBtns"><button class="btn amber" data-go="assess">เริ่มทดสอบทักษะ (2 นาที) →</button><button class="btn ghostDark" data-go="courses">ดูหลักสูตร</button></div>
+      <div class="heroTrust" id="heroTrust"></div>
     </div>
     <canvas id="heroCanvas"></canvas>
   </div>
-  <div class="grid g4" style="margin-top:18px">
-    <div class="card stat"><b>10 คน</b><br>ต่อรุ่น ทุกคนได้จับอุปกรณ์</div>
-    <div class="card stat"><b>4 หลักสูตร</b><br>PLC · HMI · Robot · Smart Factory</div>
-    <div class="card stat"><b>฿7,500</b><br>ต่อคอร์ส สำหรับบุคคล</div>
-    <div class="card stat"><b>Job Matching</b><br>แนะนำงานที่ตรงกับทักษะ</div>
+  <div class="grid g4 stats" id="homeStats"></div>
+
+  <div class="secHead"><div><span class="kick">เส้นทางของคุณ</span><h2>6 ขั้น จากวัดระดับ ถึงงานที่ใช่</h2></div></div>
+  <div class="grid g3" id="homeJourney"></div>
+
+  <div class="secHead"><div><span class="kick">หลักสูตร</span><h2>เลือกเรียนตามระดับของคุณ</h2></div><button class="btn ghost" data-go="courses">ดูทั้งหมด →</button></div>
+  <div class="grid g4" id="homeCourses"></div>
+
+  <div class="band">
+    <div><span class="kick" style="color:#7fe3d8">สำหรับโรงงาน</span><h2>อบรมพนักงานแบบ Tailor-made ถึงโรงงาน</h2>
+      <p>฿75,000 ต่อรุ่น สูงสุด 12 คน (≈ ฿6,250 ต่อคน) · ออกแบบตามเครื่องจักรของคุณ · ติดตามผล 30 วัน</p></div>
+    <button class="btn amber" data-go="b2b">ขอใบเสนอราคา →</button>
   </div>
+  <footer class="foot"><b>Auto<span>Skill</span> Academy</b> · Play · Code · Grow<br><span>Prototype สำหรับการนำเสนอ — รอบอบรม ตำแหน่งงาน และช่วงเงินเดือนเป็นข้อมูลจำลอง</span></footer>
 </section>
 
 <!-- ASSESS -->
@@ -288,6 +332,17 @@ const ICONS = {
   bot: '<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 4h6M9 13v1M15 13v1M9 17h6"/>',
   factory: '<path d="M2 20V10l6 3V10l6 3V6h8v14H2z"/><path d="M6 17h2M11 17h2M16 17h2"/>',
   lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  layers: '<path d="m12 2 10 5-10 5L2 7l10-5z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
+  tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.5"/>',
+  briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/>',
+  clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V21h16"/>',
+  cube: '<path d="M21 16V8l-9-5-9 5v8l9 5 9-5z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M15.5 13 17 22l-5-3-5 3 1.5-9"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
 };
 const svg = (k, sz = 24) => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]}</svg>`;
 const BATCHES = [ ['รุ่น 1', 'ส. 9 – อา. 17 ม.ค. 2570', 'เสาร์–อาทิตย์', 3], ['รุ่น 2', 'จ. 1 – พ. 3 ก.พ. 2570', 'ต่อเนื่อง 3 วัน', 6], ['รุ่น 3', 'ส. 6 – อา. 14 มี.ค. 2570', 'เสาร์–อาทิตย์', 10] ];
@@ -326,14 +381,38 @@ const course = () => COURSES.find(c => c.id === S.course);
 // ---------- navigation ----------
 const STEPS = [['home', 'หน้าแรก'], ['assess', 'วัดระดับทักษะ'], ['courses', 'เลือกหลักสูตร'], ['lab', 'Virtual Lab 3D'], ['book', 'จองรอบอบรม'], ['passport', 'Skill Passport'], ['jobs', 'แนะนำงาน']];
 function renderNav(cur) {
-  const done = { assess: !!S.level, courses: !!S.picked, lab: S.lab, book: !!S.booking, passport: !!S.certified, jobs: Object.keys(S.saved).length > 0 }; // tick on actions, not visits
+  const done = doneMap(); // tick on actions, not visits
   $('#navList').innerHTML = STEPS.map(([k, l], i) => `<button data-go="${k}" class="${k === cur ? 'on' : ''} ${done[k] ? 'done' : ''}"><span class="n">${done[k] ? '✓' : i}</span>${l}</button>`).join('');
   document.querySelectorAll('nav [data-go="b2b"]').forEach(b => b.classList.toggle('on', cur === 'b2b'));
+}
+const JOURNEY = [
+  ['assess', 'clipboard', 'วัดระดับทักษะ', 'ตอบ 5 ข้อ รู้ระดับและคอร์สที่เหมาะ'],
+  ['courses', 'book', 'เลือกหลักสูตร', 'PLC · HMI · Robot · Smart Factory'],
+  ['lab', 'cube', 'Virtual Lab 3D', 'ลองสั่งแขนกลหยิบ–วางก่อนเข้าเรียน'],
+  ['book', 'calendar', 'จองรอบอบรม', 'รุ่นละ 10 คน ทุกคนได้จับอุปกรณ์'],
+  ['passport', 'award', 'Skill Passport', 'สอบปฏิบัติ รับใบรับรองทักษะ'],
+  ['jobs', 'briefcase', 'แนะนำงาน', 'ดูงานที่เหมาะ แล้วยื่นสมัครเอง'],
+];
+function doneMap() { return { assess: !!S.level, courses: !!S.picked, lab: S.lab, book: !!S.booking, passport: !!S.certified, jobs: Object.keys(S.saved).length > 0 }; }
+function renderHome() {
+  const d = doneMap();
+  $('#heroTrust').innerHTML = ['รุ่นละ 10 คน', 'ลงมือจริง 60%', 'ใบรับรองทักษะ'].map(t => `<span>${svg('check', 16)}${t}</span>`).join('');
+  $('#homeStats').innerHTML = [['users', '10 คน', 'ต่อรุ่น ทุกคนได้จับอุปกรณ์'], ['layers', '4 หลักสูตร', 'PLC · HMI · Robot · IIoT'], ['tag', '฿7,500', 'ต่อคอร์ส สำหรับบุคคล'], ['briefcase', 'แนะนำงาน', 'ตรงกับทักษะที่คุณมี']]
+    .map(([i, b, t]) => `<div class="card stat"><div class="si">${svg(i)}</div><div><b>${b}</b><span class="muted">${t}</span></div></div>`).join('');
+  $('#homeJourney').innerHTML = JOURNEY.map(([k, i, t, x], n) => `<button class="jcard ${d[k] ? 'done' : ''}" data-go="${k}"><div class="ji">${svg(d[k] ? 'check' : i)}</div><div><small>ขั้นที่ ${n + 1}</small><b>${t}</b><span>${x}</span></div><div class="go">${svg('arrow', 20)}</div></button>`).join('');
+  $('#homeCourses').innerHTML = COURSES.map(c => `<button class="card mini course" data-go="courses"><div class="ic">${svg(c.ic)}</div><span class="pill n" style="align-self:flex-start">${c.lvl}</span><b>${c.name}</b><span class="muted">${c.hrs} ชม. · ฿${PRICE.toLocaleString()}</span></button>`).join('');
+}
+function renderStepper(p) {
+  const i = JOURNEY.findIndex(j => j[0] === p), d = doneMap();
+  $('#stepper').classList.toggle('hide', i < 0);
+  if (i < 0) return;
+  $('#stepper').innerHTML = JOURNEY.map(([k, , t], n) => `<button data-go="${k}" class="${n === i ? 'on' : ''} ${d[k] ? 'done' : ''}"><i></i>${n + 1}. ${t}</button>`).join('');
 }
 function go(p) {
   document.querySelectorAll('[data-page]').forEach(s => s.classList.toggle('hide', s.dataset.page !== p));
   S.visited[p] = true; save(); renderNav(p);
-  ({ assess: renderQuiz, courses: renderCourses, lab: startLab, book: renderBook, passport: renderPassport, jobs: renderJobs, b2b: renderQuote })[p]?.();
+  renderStepper(p);
+  ({ home: renderHome, assess: renderQuiz, courses: renderCourses, lab: startLab, book: renderBook, passport: renderPassport, jobs: renderJobs, b2b: renderQuote })[p]?.();
   scrollTo(0, 0); location.hash = p;
   document.querySelector('#navList .on')?.scrollIntoView({ inline: 'center', block: 'nearest' }); // keep active tab visible in the mobile tab bar
 }
